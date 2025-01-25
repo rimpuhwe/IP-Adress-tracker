@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getLocation } from "./App";
+import MapContainer from './MapContainer';
 
 function IpTracker() {
   const [ip, setIp] = useState("");
@@ -45,6 +46,10 @@ function IpTracker() {
                 <span className="block"> {location.ip}</span>
               </div>
               <div>
+                <strong>Country:</strong>
+                <span className="block">{location.country_name}</span>
+              </div>
+              <div>
                 <strong>City:</strong>
                 <span className="block">{location.city}</span>
               </div>
@@ -53,9 +58,14 @@ function IpTracker() {
                 <span className="block">{location.time_zone.current_time}</span>
               </div>
             </div>
+            
           )}
         </div>
+        <div style={{ height: '400px', width: '100%' }}>
+            <MapContainer location={location} />
+        </div>
       </div>
+      
     </>
   );
 }

@@ -24,9 +24,6 @@ function App() {
       <div className='border border-solid border-transparent bg-[url("/pattern-bg-desktop.png")]'>
         <IpTracker />
       </div>
-      <div className="border-3 border-solid border-red-500">
-        <p>This is the main application component</p>
-      </div>
     </>
   );
 }
