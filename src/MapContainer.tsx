@@ -35,6 +35,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ lat, lng }) => {
       const ui = H.ui.UI.createDefault(map, defaultLayers);
       const mapEvents = new H.mapevents.MapEvents(map);
       new H.mapevents.Behavior(mapEvents);
+      console.log(ui);
 
       // Cleanup map on component unmount
       return () => {
