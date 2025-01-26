@@ -1,37 +1,79 @@
-import React from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-
-// Define the type for location
-interface Location {
-  latitude: number;
-  longitude: number;
-}
+import React, { useEffect, useRef } from "react";
 
 interface MapContainerProps {
-  location: Location | null;
+  lat: number;
+  lng: number;
 }
 
-const MapContainer: React.FC<MapContainerProps> = ({ location }) => {
-  const mapStyles = {
-    height: "100%",
-    width: "100%",
-  };
+const MapContainer: React.FC<MapContainerProps> = ({ lat, lng }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
 
-  const defaultCenter = location
-    ? { lat: location.latitude, lng: location.longitude }
-    : { lat: -34.397, lng: 150.644 };
+  useEffect(() => {
+    const loadScript = (src: string) => {
+      return new Promise<void>((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Script load error for ${src}`));
+        document.body.appendChild(script);
+      });
+    };
 
-  return (
-    <LoadScript googleMapsApiKey='60f288361458402fbb118f785afa57c7'>
-      <GoogleMap
-        mapContainerStyle={mapStyles}
-        zoom={8}
-        center={defaultCenter}
-      >
-        {location && <Marker position={{ lat: location.latitude, lng: location.longitude }} />}
-      </GoogleMap>
-    </LoadScript>
-  );
+    const initializeMap = () => {
+      if (!mapRef.current || !window.H) return;
+
+      const H = window.H;
+
+      // Initialize the HERE Maps platform
+      const platform = new H.service.Platform({
+        apikey: "Ah5lnrvyedguDezyYDJrfmdM3sbH_BoTrpWG-GRjVF0",
+      });
+
+      const defaultLayers = platform.createDefaultLayers();
+
+      // Initialize a map
+      const map = new H.map.Map(
+        mapRef.current,
+        defaultLayers.vector.normal.map,
+        {
+          center: { lat, lng },
+          zoom: 14,
+          pixelRatio: window.devicePixelRatio || 1,
+        }
+      );
+
+      // Add map controls
+      const ui = H.ui.UI.createDefault(map, defaultLayers);
+      const mapEvents = new H.mapevents.MapEvents(map);
+      new H.mapevents.Behavior(mapEvents);
+
+      // Add a marker to the map
+      const marker = new H.map.Marker({ lat, lng });
+      map.addObject(marker);
+
+      // Cleanup map on component unmount
+      return () => {
+        map.dispose();
+      };
+    };
+
+    const loadHereMaps = async () => {
+      try {
+        await loadScript("https://js.api.here.com/v3/3.1/mapsjs-core.js");
+        await loadScript("https://js.api.here.com/v3/3.1/mapsjs-service.js");
+        await loadScript("https://js.api.here.com/v3/3.1/mapsjs-ui.js");
+        await loadScript("https://js.api.here.com/v3/3.1/mapsjs-mapevents.js");
+        initializeMap();
+      } catch (error) {
+        console.error("Error loading HERE Maps scripts:", error);
+      }
+    };
+
+    loadHereMaps();
+  }, [lat, lng]);
+
+  return <div ref={mapRef} style={{ width: "100%", height: "400px" }} />;
 };
 
 export default MapContainer;
