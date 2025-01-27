@@ -4,7 +4,7 @@ import "./App.css";
 function App() {
   return (
     <>
-      <div className="border border-solid border-transparent bg-[url('/pattern-bg-desktop.png')]">
+      <div className="border border-solid border-transparent bg-[url('/pattern-bg-desktop.png')] w-full h-screen">
         <IpTracker />
       </div>
     </>
