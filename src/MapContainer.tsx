@@ -1,3 +1,5 @@
+/// <reference types="@types/heremaps" />
+
 import React, { useEffect, useRef } from "react";
 
 interface MapContainerProps {
@@ -32,6 +34,10 @@ const MapContainer: React.FC<MapContainerProps> = ({ lat, lng }) => {
     const mapEvents = new H.mapevents.MapEvents(map);
     new H.mapevents.Behavior(mapEvents);
     console.log(ui);
+
+    // adding the marker to the map
+    const marker = new H.map.Marker({ lat, lng });
+    map.addObject(marker);
 
     // Cleanup map on component unmount
     return () => {
